@@ -1,0 +1,17 @@
+{
+  "name": "south-park-text",
+  "version": "1.0.0",
+  "description": "A node app that retrieves south park scripts and creates characters word counts.",
+  "main": "run.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Patrick Bacon-Blaber",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "fs": "0.0.1-security",
+    "mongoose": "^5.2.13",
+    "request": "^2.88.0"
+  }
+}
