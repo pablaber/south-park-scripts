@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/sp-scripts');
+mongoose.connect('mongodb://localhost/sp-scripts', { useNewUrlParser: true });
 
 let db = mongoose.connection;
 let Schema = mongoose.Schema;
@@ -9,8 +9,11 @@ let ScriptModelSchema = new Schema({
   season: Number,
   episode: Number,
   lines: [{
-      character: String,
-      line: String
+      _id: {
+        select: false
+      },
+      c: String,
+      l: String
   }]
   
 });
@@ -30,21 +33,37 @@ module.exports = {
       }
       toInsert = toInsert.concat(season)
     }
-    console.log("MONGODB: attempting to insert " + toInsert.length + " records...")
-    ScriptModel.insertMany(toInsert, (err, docs) => {
-      if (err) {
+    console.log("MONGODB: attempting to delete existing documents...");
+    ScriptModel.deleteMany({}, (err) => {
+      if(err) {
         console.log("MONGODB ERROR: " + err)
       }
-      // console.log(docs[0])
-      console.log("MONGODB: " + docs.length + " records inserted.");
-      if(docs.length != toInsert.length) {
-        console.log("MONGODB WARNING: not all records inserted successfully!");
-      }
-      else {
-        console.log("MONGODB: all records inserted successfully.")
-      }
-      mongoose.connection.close();
-      console.log("MONGODB: connection closed.")
-    }); 
+      console.log("MONGODB: successfully deleted existing records.");
+      console.log("MONGODB: attempting to insert " + toInsert.length + " records...")
+      ScriptModel.insertMany(toInsert, (err, docs) => {
+        if (err) {
+          console.log("MONGODB ERROR: " + err)
+        }
+        console.log("MONGODB: " + docs.length + " records inserted.");
+        if (docs.length != toInsert.length) {
+          console.log("MONGODB WARNING: not all records inserted successfully!");
+        }
+        else {
+          console.log("MONGODB: all records inserted successfully.")
+        }
+        mongoose.connection.close();
+        console.log("MONGODB: connection closed.")
+      }); 
+    })
+    
+  },
+
+  loadScript: function() {
+    return new Promise((resolve, reject) => {
+      ScriptModel.find({}, (err, docs) => {
+        if(err) reject(err);
+        resolve(docs);
+      })
+    })
   }
 }

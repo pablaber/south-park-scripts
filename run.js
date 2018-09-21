@@ -1,6 +1,5 @@
 const cheerio = require('cheerio');
 const request = require('request');
-const fs = require('fs');
 
 const db = require('./db');
 
@@ -26,7 +25,6 @@ function getScriptObjects() {
       if(error) {
         reject(error);
       }
-
       Promise.all(seasonPromises).then(async function(seasonEpisodeUrls) {
 
         if (DEBUG) {
@@ -120,12 +118,12 @@ function getScriptFromUrl(url) {
         let character = tdCharacter.text().trim();
         let line = tdLine.text().trim();
         scriptObj.lines.push({
-          character,
-          line
+          c: character,
+          l: line
         })
       })
       scriptObj.lines = scriptObj.lines.filter((value) => {
-        return !!value.character && !!value.line;
+        return !!value.c && !!value.l;
       });
       if(scriptObj.length == 0) {
         reject("ERROR: empty object from " + url);
